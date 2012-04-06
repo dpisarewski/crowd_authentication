@@ -1,0 +1,6 @@
+crowd_server:
+  application_name: ""
+  application_password: ""
+  host: ""
+  port: 8095
+  api_path: "crowd/rest/usermanagement/1"
