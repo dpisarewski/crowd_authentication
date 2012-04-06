@@ -1,5 +1,4 @@
-# Requires rest-client gem
-# include this module in the ApplicationController
+require "rest-client"
 # use authenticate_with_crowd_id with email and password to authenticate by crowd id
 
 module CrowdAuthentication
@@ -8,6 +7,7 @@ module CrowdAuthentication
     protected
     def authenticate_with_crowd_id(username, password)
       resp = crowd_request("authentication", :data => {:value => password}, :params => {:username => username})
+      rails_logger.info "CROWD API: response code #{resp.code}"
       resp.code == 200
     end
 
@@ -33,7 +33,7 @@ module CrowdAuthentication
                when :xml then options[:data].to_xml
                else options[:data]
              end
-      rails_logger.info "CROWD API: sending request #{crowd_uri(action)}"
+      rails_logger.info "CROWD API: sending request #{crowd_config[:api_path]}/#{action}"
       RestClient.post(crowd_uri(action),
                       data,
                       :params       => options[:params],
@@ -43,15 +43,15 @@ module CrowdAuthentication
 
     private
     def crowd_config
-      @crowd_authentication_config ||= YAML::load_file(File.join(rails_root, "config", "crowd_authentication.yml"))['crowd_server'].symbolize_keys
+      @crowd_authentication_config ||= YAML::load_file(File.join(rails_root, "config", "crowd_authentication.yml"))['crowd_server'].symbolize_keys or raise Exception.new("Error on loading configuration file for crowd_authentication")
     end
 
     def rails_root
-      if const_defined?(:Rails) then Rails.root elsif const_defined?(:RAILS_ENV) then RAILS_ENV end
+      if defined?(Rails) then Rails.root elsif defined?(RAILS_ENV) then RAILS_ENV end
     end
 
     def rails_logger
-      if const_defined?(:Rails) then Rails.logger elsif const_defined?(:RAILS_DEFAULT_LOGGER) then RAILS_DEFAULT_LOGGER end
+      if defined?(Rails) then Rails.logger elsif defined?(RAILS_DEFAULT_LOGGER) then RAILS_DEFAULT_LOGGER end
     end
   end
 
