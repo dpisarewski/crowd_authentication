@@ -1,0 +1,11 @@
+Installation
+
+Put into your Gemfile:
+
+gem "crowd_authentication", :git => git@github.com:arvatoSystemsNA/crowd_authentication.git
+
+Usage
+
+If you are using Rails 2 you have to include CrowdAuthentication::Controller in your ApplicationController.
+
+Use method authenticate_with_crowd_id(crowd_id, password) in your controllers for authentication. This method returns true if authentication using given crowd id and password was successful and false otherwise.
