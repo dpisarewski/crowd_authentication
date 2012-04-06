@@ -1,3 +1,5 @@
 require "crowd_authentication/controller"
 
-ApplicationController.send(:include, CrowdAuthentication::Controller)
+config.after_initialize do
+  ApplicationController.send(:include, CrowdAuthentication::Controller)
+end
