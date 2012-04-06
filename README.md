@@ -4,23 +4,23 @@ Installation
 Put into your Gemfile:
 
 ```ruby
-gem "crowd_authentication", :git => git@github.com:arvatoSystemsNA/crowd_authentication.git
+gem "crowd_authentication", :git => "git@github.com:arvatoSystemsNA/crowd_authentication.git"
 ```
 
 Usage
 -----
 
-Add your host to remote hosts list in crowd applications http://www.arvatosystems-us.com/crowd/console/secure/application/browse.action
+1. Add your host to remote hosts list in crowd applications http://www.arvatosystems-us.com/crowd/console/secure/application/browse.action
 
-Copy config/crowd_authentication.yml file into the rails config directory and set up the credentials for your application.
+2. Copy config/crowd_authentication.yml file into the rails config directory and set up the credentials for your application.
 
-If you are using Rails 2 you have to
+2.1 If you are using Rails 2 you have to
 ```ruby
 include CrowdAuthentication::Controller
 ```
 in your ApplicationController.
 
-Use
+3. Use
 ```ruby
 authenticate_with_crowd_id(crowd_id, password)
 ```
