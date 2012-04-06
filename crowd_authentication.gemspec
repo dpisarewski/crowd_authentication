@@ -1,6 +1,9 @@
+# -*- encoding: utf-8 -*-
+require File.expand_path('../lib/crowd_authentication/version', __FILE__)
+
 Gem::Specification.new do |s|
   s.name        = 'crowd_authentication'
-  s.version     = '0.0.1'
+  s.version     = CrowdAuthentication::VERSION
   s.date        = '2012-04-06'
   s.summary     = "Atlassian Crowd authentication in Rails"
   s.description = "Gem to integrate Atlassian Crowd authentication into a Rails application"
