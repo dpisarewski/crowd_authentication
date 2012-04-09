@@ -12,13 +12,7 @@ module CrowdAuthentication
     end
 
     def crowd_uri(action)
-      url_for :user       => crowd_config[:application_name],
-              :password   => crowd_config[:application_password],
-              :host       => crowd_config[:host],
-              :port       => crowd_config[:port],
-              :controller => crowd_config[:api_path],
-              :action     => action,
-              :only_path  => false
+      "http://#{crowd_config[:application_name]}:#{crowd_config[:application_password]}@#{crowd_config[:host]}:#{crowd_config[:port]}/#{crowd_config[:api_path]}/#{action}"
     end
 
     # Sends REST API request to crowd server
