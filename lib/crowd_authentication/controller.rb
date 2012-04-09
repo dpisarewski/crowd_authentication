@@ -33,7 +33,7 @@ module CrowdAuthentication
                when :xml then options[:data].to_xml
                else options[:data]
              end
-      rails_logger.info "CROWD API: sending request #{crowd_config[:api_path]}/#{action}"
+      rails_logger.info "CROWD API: sending request #{crowd_uri(action).gsub(/w+:w+@/, '')}"
       RestClient.post(crowd_uri(action),
                       data,
                       :params       => options[:params],
