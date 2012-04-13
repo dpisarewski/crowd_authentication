@@ -6,7 +6,7 @@ module CrowdAuthentication
 
     protected
     def authenticate_with_crowd_id(username, password)
-      resp = crowd_request("authentication", :data => {:value => password}, :params => {:username => username})
+      resp = crowd_request("authentication", :data => {:value => password}, :params => {:username => username}, :method => :post)
       resp.code == 200
     end
 
