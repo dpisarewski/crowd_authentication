@@ -33,6 +33,8 @@ in your controllers for authentication. This method returns true if authenticati
 crowd_user_data(crowd_id) returns a Hash with user data.
 
 For example:
+
+`
 {"expand"=>"attributes",
  "link"=>
   {"href"=>
@@ -55,3 +57,4 @@ For example:
     {"href"=>
       "http://74.50.50.11:8095/crowd/rest/usermanagement/1/user/attribute?username=dieter.pisarewski@arvatosystems.com",
      "rel"=>"self"}}}
+`
