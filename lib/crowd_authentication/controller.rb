@@ -7,8 +7,12 @@ module CrowdAuthentication
     protected
     def authenticate_with_crowd_id(username, password)
       resp = crowd_request("authentication", :data => {:value => password}, :params => {:username => username})
-      rails_logger.info "CROWD API: response code #{resp.code}"
       resp.code == 200
+    end
+
+    def crowd_user_data(username)
+      resp = crowd_request("user", :params => {:username => username})
+      ActiveSupport::JSON.decode resp.body
     end
 
     def crowd_uri(action)
@@ -28,11 +32,14 @@ module CrowdAuthentication
                else options[:data]
              end
       rails_logger.info "CROWD API: sending request #{crowd_uri(action).gsub(/w+:w+@/, '')}"
-      RestClient.post(crowd_uri(action),
+      resp = RestClient.post(crowd_uri(action),
                       data,
                       :params       => options[:params],
                       :content_type => options[:format],
                       :accept       => options[:format]) {|response, request, result| response }
+      resp.tap do
+        rails_logger.info "CROWD API: response code #{resp.code}"
+      end
     end
 
     private
