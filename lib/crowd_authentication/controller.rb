@@ -25,7 +25,7 @@ module CrowdAuthentication
     # options[:format] default value is :json. possible values :json, :xml, :text
     # @return [Object] response object
     def crowd_request(action, options = {})
-      options = {:format => :json}.merge(options)
+      options = {:format => :json, :method => :get}.merge(options)
       if options[:data]
         data = case options[:format].to_sym
                  when :json then options[:data].to_json
@@ -33,12 +33,17 @@ module CrowdAuthentication
                  else options[:data]
                end
       end
+      opts = {:params => options[:params], :content_type => options[:format], :accept => options[:format]}
+
       rails_logger.info "CROWD API: sending request #{crowd_uri(action).gsub(/[\w\d\-_]+:[\w\d\-_]+@/, '')}"
-      resp = RestClient.post(crowd_uri(action),
-                      data,
-                      :params       => options[:params],
-                      :content_type => options[:format],
-                      :accept       => options[:format]) {|response, request, result| response }
+
+      resp = case options[:method].to_sym
+        when :post    then RestClient.post(crowd_uri(action), data, opts) {|response, request, result| response }
+        when :get     then RestClient.get(crowd_uri(action), opts) {|response, request, result| response }
+        when :put     then RestClient.put(crowd_uri(action), data, opts) {|response, request, result| response }
+        when :delete  then RestClient.delete(crowd_uri(action))
+      end
+
       resp.tap do
         rails_logger.info "CROWD API: response code #{resp.code}"
       end
