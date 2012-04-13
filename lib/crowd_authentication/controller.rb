@@ -26,12 +26,14 @@ module CrowdAuthentication
     # @return [Object] response object
     def crowd_request(action, options = {})
       options = {:format => :json}.merge(options)
-      data = case options[:format].to_sym
-               when :json then options[:data].to_json
-               when :xml then options[:data].to_xml
-               else options[:data]
-             end
-      rails_logger.info "CROWD API: sending request #{crowd_uri(action).gsub(/w+:w+@/, '')}"
+      if options[:data]
+        data = case options[:format].to_sym
+                 when :json then options[:data].to_json
+                 when :xml then options[:data].to_xml
+                 else options[:data]
+               end
+      end
+      rails_logger.info "CROWD API: sending request #{crowd_uri(action).gsub(/[\w\d\-_]+:[\w\d\-_]+@/, '')}"
       resp = RestClient.post(crowd_uri(action),
                       data,
                       :params       => options[:params],
