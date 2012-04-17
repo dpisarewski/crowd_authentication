@@ -31,8 +31,10 @@ authenticate_with_crowd_id(crowd_id, password)
 in your controllers for authentication. This method returns true if authentication using given crowd id and password was successful and false otherwise.
 
 ```ruby
-crowd_user_data(crowd_id) returns a Hash with user data.
+crowd_user_data(crowd_id)
 ```
+
+ returns a Hash with user data.
 
 For example:
 
