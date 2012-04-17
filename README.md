@@ -30,7 +30,9 @@ authenticate_with_crowd_id(crowd_id, password)
 
 in your controllers for authentication. This method returns true if authentication using given crowd id and password was successful and false otherwise.
 
+```ruby
 crowd_user_data(crowd_id) returns a Hash with user data.
+```
 
 For example:
 
@@ -38,7 +40,7 @@ For example:
 {"expand"=>"attributes",
  "link"=>
   {"href"=>
-    "http://74.50.50.11:8095/crowd/rest/usermanagement/1/user?username=dieter.pisarewski@arvatosystems.com",
+    "",
    "rel"=>"self"},
  "name"=>"dieter.pisarewski@arvatosystems.com",
  "first-name"=>"Dieter",
@@ -48,13 +50,13 @@ For example:
  "password"=>
   {"link"=>
     {"href"=>
-      "http://74.50.50.11:8095/crowd/rest/usermanagement/1/user/password?username=dieter.pisarewski@arvatosystems.com",
+      "",
      "rel"=>"edit"}},
  "active"=>true,
  "attributes"=>
   {"attributes"=>[],
    "link"=>
     {"href"=>
-      "http://74.50.50.11:8095/crowd/rest/usermanagement/1/user/attribute?username=dieter.pisarewski@arvatosystems.com",
+      "",
      "rel"=>"self"}}}
 ```
