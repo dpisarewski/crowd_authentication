@@ -5,9 +5,24 @@ module CrowdAuthentication
   module Controller
 
     protected
+    def self.after_authentication(&block)
+      @crowd_callbacks ||= {}
+      @crowd_callbacks[:after] << block
+    end
+
+    def self.before_authentication(&block)
+      @crowd_callbacks ||= {}
+      @crowd_callbacks[:before] << block
+    end
+
     def authenticate_with_crowd_id(username, password)
-      resp = crowd_request("authentication", :data => {:value => password}, :params => {:username => username}, :method => :post)
-      {:success => resp.code == 200, :code => resp.code, :body => ActiveSupport::JSON.decode(resp.body)}
+      opts = {:password => password, :username => username}
+      @crowd_callbacks[:before].each{|b| b.call opts}
+      resp = crowd_request("authentication", :data => {:value => opts[:password]}, :params => {:username => opts[:username]}, :method => :post)
+      resp_hash = {:success => resp.code == 200, :code => resp.code, :body => ActiveSupport::JSON.decode(resp.body)}
+      resp_hash.tap do
+        @crowd_callbacks[:after].each{|b| b.call resp_hash}
+      end
     end
 
     def crowd_user_data(username)
@@ -46,7 +61,7 @@ module CrowdAuthentication
 
       resp.tap do
         rails_logger.info "CROWD API: response code #{resp.code}"
-        rails_logger.info "CROWD API: response code #{resp.body}"
+        rails_logger.info "CROWD API: response body #{resp.body}"
       end
     end
 
