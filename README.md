@@ -28,7 +28,11 @@ Use
 authenticate_with_crowd_id(crowd_id, password)
 ```
 
-in your controllers for authentication. This method returns true if authentication using given crowd id and password was successful and false otherwise.
+in your controllers for authentication. This method returns a hash with response code and response body in JSON format.
+
+```ruby
+{:success => true, :code => 200, :body => body_hash}
+```
 
 ```ruby
 crowd_user_data(crowd_id)

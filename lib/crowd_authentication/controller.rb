@@ -7,7 +7,7 @@ module CrowdAuthentication
     protected
     def authenticate_with_crowd_id(username, password)
       resp = crowd_request("authentication", :data => {:value => password}, :params => {:username => username}, :method => :post)
-      resp.code == 200
+      {:success => resp.code == 200, :code => resp.code, :body => ActiveSupport::JSON.decode(resp.body)}
     end
 
     def crowd_user_data(username)
@@ -46,6 +46,7 @@ module CrowdAuthentication
 
       resp.tap do
         rails_logger.info "CROWD API: response code #{resp.code}"
+        rails_logger.info "CROWD API: response code #{resp.body}"
       end
     end
 
