@@ -4,15 +4,21 @@ require "rest-client"
 module CrowdAuthentication
   module Controller
 
-    protected
-    def self.after_authentication(&block)
-      @crowd_callbacks ||= {}
-      @crowd_callbacks[:after] << block
+    def self.included(base)
+      base.extend ClassMethods
     end
 
-    def self.before_authentication(&block)
-      @crowd_callbacks ||= {}
-      @crowd_callbacks[:before] << block
+    protected
+    module ClassMethods
+      def self.after_authentication(&block)
+        @crowd_callbacks ||= {}
+        @crowd_callbacks[:after] << block
+      end
+
+      def self.before_authentication(&block)
+        @crowd_callbacks ||= {}
+        @crowd_callbacks[:before] << block
+      end
     end
 
     def authenticate_with_crowd_id(username, password)
