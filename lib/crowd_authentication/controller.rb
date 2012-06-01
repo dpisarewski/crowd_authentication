@@ -5,29 +5,47 @@ module CrowdAuthentication
   module Controller
 
     def self.included(base)
-      base.extend ClassMethods
+      base.extend CrowdClassMethods
     end
 
     protected
-    module ClassMethods
-      def self.after_authentication(&block)
-        @crowd_callbacks ||= {}
-        @crowd_callbacks[:after] << block
+
+    module CrowdClassMethods
+      def after_authentication(*symbols)
+        init_callbacks
+        self.crowd_callbacks[:after] += symbols.map(&:to_sym)
       end
 
-      def self.before_authentication(&block)
-        @crowd_callbacks ||= {}
-        @crowd_callbacks[:before] << block
+      def before_authentication(*symbols)
+        init_callbacks
+        self.crowd_callbacks[:before] += symbols.map(&:to_sym)
+      end
+
+      protected
+      attr_accessor :crowd_callbacks
+
+      def init_callbacks
+        self.crowd_callbacks ||= {:before => [], :after => []}
       end
     end
 
     def authenticate_with_crowd_id(username, password)
       opts = {:password => password, :username => username}
-      @crowd_callbacks[:before].each{|b| b.call opts}
+      do_callbacks :before, opts
+
       resp = crowd_request("authentication", :data => {:value => opts[:password]}, :params => {:username => opts[:username]}, :method => :post)
       resp_hash = {:success => resp.code == 200, :code => resp.code, :body => ActiveSupport::JSON.decode(resp.body)}
+
       resp_hash.tap do
-        @crowd_callbacks[:after].each{|b| b.call resp_hash}
+        do_callbacks :after, resp_hash
+      end
+    end
+
+    def do_callbacks(trigger, arguments)
+      self.class.send :init_callbacks
+      (self.class.send :crowd_callbacks)[trigger.to_sym].each do |func|
+        rails_logger.info "CROWD API: Triggering #{trigger} callback: #{func}"
+        self.send func, arguments
       end
     end
 
@@ -59,11 +77,11 @@ module CrowdAuthentication
       rails_logger.info "CROWD API: sending request #{crowd_uri(action).gsub(/[\w\d\-_]+:[\w\d\-_]+@/, '')}"
 
       resp = case options[:method].to_sym
-        when :post    then RestClient.post(crowd_uri(action), data, opts) {|response, request, result| response }
-        when :get     then RestClient.get(crowd_uri(action), opts) {|response, request, result| response }
-        when :put     then RestClient.put(crowd_uri(action), data, opts) {|response, request, result| response }
-        when :delete  then RestClient.delete(crowd_uri(action))
-      end
+               when :post    then RestClient.post(crowd_uri(action), data, opts) {|response, request, result| response }
+               when :get     then RestClient.get(crowd_uri(action), opts)        {|response, request, result| response }
+               when :put     then RestClient.put(crowd_uri(action), data, opts)  {|response, request, result| response }
+               when :delete  then RestClient.delete(crowd_uri(action))
+             end
 
       resp.tap do
         rails_logger.info "CROWD API: response code #{resp.code}"
