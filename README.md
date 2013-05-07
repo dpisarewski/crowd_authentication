@@ -4,7 +4,7 @@ Installation
 Put into your Gemfile:
 
 ```ruby
-gem "crowd_authentication", :git => "git@github.com:arvatoSystemsNA/crowd_authentication.git"
+gem "crowd_authentication", :git => "git://github.com/dpisarewski/crowd_authentication.git"
 ```
 
 Usage
