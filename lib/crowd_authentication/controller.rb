@@ -95,7 +95,7 @@ module CrowdAuthentication
     end
 
     def rails_root
-      if defined?(Rails) then Rails.root elsif defined?(RAILS_ENV) then RAILS_ENV end
+      if defined?(Rails) then Rails.root elsif defined?(RAILS_ROOT) then RAILS_ROOT end
     end
 
     def rails_logger
